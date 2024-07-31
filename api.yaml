@@ -1,0 +1,932 @@
+openapi: 3.0.0
+info:
+  title: Cricket Player Management System
+  version: 1.0.0
+  description: APIs to manage cricket players and statistics.
+servers:
+  - url: http://localhost:3000
+    description: Local host server
+paths:
+  /api/auth/register:
+    post:
+      tags:
+        - USERS
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+                userRole:
+                  type: string
+                  enum: [admin, manager, viewer]
+      responses:
+        '200':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  error: 
+                    type: boolean
+                  data: 
+                    type: object
+
+
+                  message:
+                    type: string
+              example:
+                success: true
+                error: false
+                data: 
+                  username: sachin
+                  email: sachin@gmail.com
+                  role: admin
+                  lastLogin: 11-11-2000
+                message:  user added successfully
+        '400':
+          description: username already existes
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:  
+                    type: boolean
+                  error:
+                    type: object
+                    properties:
+                      errorCode:
+                        type: number
+                      errorMessage:
+                        type: string
+                    example:
+                      errorCode: 400
+                      errorMessage: Error message from server
+                  message: 
+                    type: string
+                  data: 
+                    type: null
+                  statusCode: number 
+              example:
+                success: false
+                error: 
+                  errorCode: 400
+                  errorMessage: Error from server
+                
+                message: username already existes
+  /api/auth/login:
+    post:
+      tags:
+        - USERS
+      summary:  login user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Successful login
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  error: 
+                    type: boolean
+                  data: 
+                    type: object
+                    properties:
+                      jwtToken: 
+                        type: string
+                  message:
+                    type: string
+                  statusCode:
+                    type: number
+              example:
+                success: true
+                error: false
+                data: 
+                  twtToken: jwt token
+                message: login successful
+                statusCode: 200
+
+        '400':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFoundError"
+
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerError"
+
+  /api/auth/logout:
+    post:
+      tags:
+        - USERS
+      summary: logout api
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successfully logged out
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  error: 
+                    type: boolean
+                  data: 
+                    type: object
+                  message:
+                    type: string
+                  statusCode:
+                    type: number
+              example:
+                success: true
+                error: false
+                data: 
+                message: logout successfull
+                statusCode: 200
+
+
+
+        '400':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFoundError"
+
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerError"
+
+  /api/auth/me:
+    get:
+      tags:
+        - USERS
+      summary: Get current user details
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User information retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: 
+                    type: boolean
+                  error: 
+                    type: string
+                  message: 
+                    type: string
+                  data:
+                    type: object
+                  statusCode:
+                    type: number
+              example:
+                success: true
+                error: null
+                message: User details fetched successfully
+                data:
+                  username: abcd
+                  email: abcd@gmail.com
+                  role: viewer
+                  lastLogin: 12-07-2000
+                statusCode: 200
+        '400':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFoundError"
+
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerError"
+
+  /api/auth/change-password:
+    put:
+      tags:
+        - USERS
+      summary: Change user password
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                currentPassword:
+                  type: string
+                newPassword:
+                  type: string
+      responses:
+        '200':
+          description: Password changed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  error: 
+                    type: boolean
+                  data: 
+                    type: object
+                  message:
+                    type: string
+              example:
+                success: true
+                error: false
+                data: null
+                message: Password changed successfully
+                statusCode: 200
+
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFoundError"
+
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerError"
+
+  /api/players/:
+    post:
+      tags:
+        - PLAYERS
+      summary: Add a new player
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                age:
+                  type: integer
+                category:
+                  type: string
+                  enum: [bowler, batsman, all-rounder]
+                team:
+                  type: string
+      responses:
+        '200':
+          description: "Player added successfully"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  error: 
+                    type: boolean
+                  data: 
+                    type: object
+                  message:
+                    type: string
+              example:
+                success: true
+                error: false
+                message: player added successfully
+                data: null
+                statusCode: 200
+
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFoundError"
+
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerError"
+
+    get:
+      tags:
+        - PLAYERS
+      summary: List all players
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: List of players
+          content:
+            application/json:
+              schema:
+                type: array
+                properties:
+                  success:
+                    type: boolean
+                  error: 
+                    type: boolean
+                  message: 
+                    type: string
+                  data: 
+                    type: object
+                  statusCode:
+                    type: number
+                example:
+                  success: true
+                  error: false
+                  message: Players fetched successfully
+                  data:
+                    name: sachin
+                    age: 26
+                    category: all-rounder
+                    team: india
+                  statusCode: 200
+
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerError"
+
+  /api/players/{id}:
+    get:
+      tags:
+        - PLAYERS
+      summary: Get player details
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Player details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  error: 
+                    type: boolean
+                  data: 
+                    type: object
+                  message:
+                    type: string
+                  statusCode: 
+                    type: number
+              example:
+                success: true
+                error: false
+                data: 
+                  name: sachin
+                  age: 26
+                  category: all-rounder
+                  team: india
+                message: Player fetched successfully
+                statusCode: 200
+
+        '400':
+          description: Player not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFoundError" 
+
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerError"
+
+    put:
+      tags:
+        - PLAYERS
+      summary: Update player information
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                age:
+                  type: integer
+                category:
+                  type: string
+                  enum: [bowler, batsman, all-rounder]
+                team:
+                  type: string
+      responses:
+        '200':
+          description: Player updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  error: 
+                    type: boolean
+                  data: 
+                    type: object
+                  message:
+                    type: string
+                  statusCode: 
+                    type: number
+              example:
+                success: true
+                error: false
+                data: null
+                message: Player details updated successfully
+                statusCode: 200
+
+        '400':
+          description: Player not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFoundError"
+
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerError"
+
+    delete:
+      tags:
+        - PLAYERS
+      summary: Delete a player
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Player deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  error: 
+                    type: boolean
+                  data: 
+                    type: object
+                  message:
+                    type: string
+                  statusCode: 
+                    type: number
+              example:
+                success: true
+                error: false
+                data: null
+                message: Player deleted successfully
+                statusCode: 200
+
+        '400':
+          description: Player not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFoundError"
+          
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerError"
+
+  /api/statistics:
+    post:
+      tags:
+        - STATISTICS
+      summary: Add new statistics for a player
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                player_id:
+                  type: string
+                match_id:
+                  type: string
+                match_date:
+                  type: string
+                  format: date
+                runs_scored:
+                  type: integer
+                wickets_taken:
+                  type: integer
+                catches:
+                  type: integer
+                stumpings:
+                  type: integer
+      responses:
+        '200':
+          description: Statistics added successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  error: 
+                    type: boolean
+                  data: 
+                    type: object
+                  message:
+                    type: string
+                  statusCode: 
+                    type: number
+              example:
+                success: true
+                error: false
+                data: null
+                message: Statistics added successfully
+                statusCode: 200
+
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFoundError"
+
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerError"
+
+    get:
+      tags:
+        - STATISTICS
+      summary: List all statistics from statistics table
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: List of statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  error: 
+                    type: boolean
+                  data: 
+                    type: object
+                  message:
+                    type: string
+                  statusCode: 
+                    type: number
+              example:
+                success: true
+                error: false
+                data: 
+                  id: 1
+                  player_id: 1
+                  match_id: 1
+                  match_date: 10-11-1999
+                  runs_scored: 2000
+                  wickets_taken: 300
+                  catches: 200
+                  stumpings: 50
+                  other_statistics: null
+                  
+                message: Statistics fetched successfully
+                statusCode: 200
+                    
+
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerError"
+
+  /api/statistics/{playerId}:
+    get:
+      tags:
+        - STATISTICS
+      summary: Get statistics for a single player
+      parameters:
+        - name: playerId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Player statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  error: 
+                    type: boolean
+                  data: 
+                    type: object
+                  message:
+                    type: string
+                  statusCode: 
+                    type: number
+              example:
+                success: true
+                error: false
+                data: 
+                  id: 1
+                  player_id: 1
+                  match_id: 1
+                  match_date: 10-11-1999
+                  runs_scored: 2000
+                  wickets_taken: 300
+                  catches: 200
+                  stumpings: 50
+                  other_statistics: null
+                  
+                message: Statistics fetched successfully
+                statusCode: 200
+
+        '400':
+          description: Player not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFoundError"
+
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerError"
+
+    put:
+      tags:
+        - STATISTICS
+      summary: Update single statistics
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                match_id:
+                  type: string
+                match_date:
+                  type: string
+                  format: date
+                runs_scored:
+                  type: integer
+                wickets_taken:
+                  type: integer
+                catches:
+                  type: integer
+                stumpings:
+                  type: integer
+                other_statistics:
+                  type: object
+      responses:
+        '200':
+          description: Statistics updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  error: 
+                    type: boolean
+                  data: 
+                    type: object
+                  message:
+                    type: string
+                  statusCode: 
+                    type: number
+              example:
+                success: true
+                error: false
+                data: null
+                  
+                message: Statistics updated successfully
+                statusCode: 200
+        '400':
+          description: Statistics not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFoundError"
+          
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerError"
+
+    delete:
+      tags:
+        - STATISTICS
+      summary: Delete specific statistics
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Statistics deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  error: 
+                    type: boolean
+                  data: 
+                    type: object
+                  message:
+                    type: string
+                  statusCode: 
+                    type: number
+              example:
+                success: true
+                error: false
+                data: 
+                message: Statistics deleted successfully
+                statusCode: 200
+        '400':
+          description: id not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFoundError"
+
+        '500':
+          description: Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerError"
+
+
+
+components:
+  schemas:
+    ServerError:
+      type: object
+      properties:
+        message:
+          type: string
+      example:
+        message: Internal server error
+    
+    NotFoundError:
+      type: object
+      properties:
+        success:
+          type: boolean
+        error:
+          type: object
+          properties:
+            errorCode:
+              type: number
+            errorMessage:
+              type: string
+          example:
+            errorCode: 400
+            errorMessage: error from function
+        message:
+          type: string
+        data: 
+          type: string
+        statusCode: 
+          type: number
+      example:
+        success: false
+        error: 
+          errorCode: 400
+          errorMessage: Error from server
+        
+        message: Request not found
+        data: null
+        statusCode: 400
+
+      
+
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+
