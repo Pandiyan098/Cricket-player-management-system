@@ -12,7 +12,7 @@ const register = async (req, res) => {
   const { username, email, password, userRole } = req.body;
   try {
     const user = await registerUser(username, email, password, userRole);
-    res.send({
+    res.status(200).json({
       success: true,
       error: false,
       message: "User Registered successfully",
@@ -22,7 +22,7 @@ const register = async (req, res) => {
       statusCode: 200
     })
   } catch (error) {
-    res.send({
+    res.status(400).json({
       success: false,
       error:{
         errorCode: 400,
@@ -45,24 +45,26 @@ const register = async (req, res) => {
 const login = async (req, res) => {
   const {email,password} = req.body;
   try{
-    const {token} = await loginUser(email, password);
-    res.send({
+    const {jwtToken}= await loginUser(email, password);
+    console.log(jwtToken)
+    res.status(200).json({
       success: true,
       error: false,
       message: "User Login successfully",
-      data: {token: token
+      data: {token: jwtToken
 
       },
       statusCode: 200
     })
   } catch(error){
-    res.send({
+    
+    res.status(400).json({
       success: false,
       error:{
         errorCode: 400,
         errorMessage: error.message
       },
-      message: "Login Failed",
+      message: "Invalid user email or password",
       data: null,
       statusCode: 400
     })
@@ -79,10 +81,15 @@ const login = async (req, res) => {
 
 const logout = async (req, res) => {
     const {username,password} = req.body;
+    
 
     try{
         const result = await logOuts(username, password);
-        res.send({
+
+        // delete res.userId;
+        // delete res.role;
+
+        res.status(200).json({
           success: true,
           error: false,
           message: "Logout successfully",
@@ -91,7 +98,7 @@ const logout = async (req, res) => {
           statusCode: 200
         })
     }catch(error){
-      res.send({
+      res.status(400).json({
         success: false,
         error:{
           errorCode: 400,
@@ -116,7 +123,7 @@ const getMe = async (req, res) => {
   try{
     const user = await getUserInfo(req.userId);
     const result = {id: user.id, username: user.username, email: user.email, role: user.role, lastLogin: user.last_login}
-    res.send({
+    res.status(200).json({
       success: true,
       error: false,
       message: "user data fetched successfully",
@@ -125,7 +132,7 @@ const getMe = async (req, res) => {
       statusCode: 200
     })
   } catch(error){
-    res.send({
+    res.status(400).json({
       success: false,
       error:{
         errorCode: 400,
@@ -147,9 +154,10 @@ const getMe = async (req, res) => {
 
 const changePass = async (req, res) => {
   const {currentPassword,newPassword} = req.body;
+  console.log(currentPassword, newPassword)
   try{
     await changePassword(req.userId,currentPassword, newPassword);
-    res.send({
+    res.status(200).json({
       success: true,
       error: false,
       message: "Password changed successfully",
@@ -159,7 +167,7 @@ const changePass = async (req, res) => {
       statusCode: 200
     })
   } catch(error){
-    res.send({
+    res.status(400).json({
       success: false,
       error:{
         errorCode: 400,

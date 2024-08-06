@@ -138,12 +138,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/NotFoundError"
 
-        '500':
-          description: Server Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ServerError"
 
   /api/auth/logout:
     post:
@@ -186,13 +180,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/NotFoundError"
 
-        '500':
-          description: Server Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ServerError"
-
+ 
   /api/auth/me:
     get:
       tags:
@@ -235,12 +223,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/NotFoundError"
 
-        '500':
-          description: Server Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ServerError"
 
   /api/auth/change-password:
     put:
@@ -290,12 +272,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/NotFoundError"
 
-        '500':
-          description: Server Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ServerError"
+
 
   /api/players/:
     post:
@@ -348,13 +325,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/NotFoundError"
 
-        '500':
-          description: Server Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ServerError"
-
+ 
     get:
       tags:
         - PLAYERS
@@ -399,13 +370,7 @@ paths:
                     team: india
                   statusCode: 200
 
-        '500':
-          description: Server Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ServerError"
-
+  
   /api/players/{id}:
     get:
       tags:
@@ -453,12 +418,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/NotFoundError" 
 
-        '500':
-          description: Server Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ServerError"
+ 
 
     put:
       tags:
@@ -518,12 +478,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/NotFoundError"
 
-        '500':
-          description: Server Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ServerError"
+  
 
     delete:
       tags:
@@ -567,17 +522,12 @@ paths:
               schema:
                 $ref: "#/components/schemas/NotFoundError"
           
-        '500':
-          description: Server Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ServerError"
+   
 
   /api/statistics:
     post:
       tags:
-        - STATISTICS
+        - PLAYER-STATISTICS
       summary: Add new statistics for a player
       requestBody:
         required: true
@@ -633,16 +583,11 @@ paths:
               schema:
                 $ref: "#/components/schemas/NotFoundError"
 
-        '500':
-          description: Server Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ServerError"
+ 
 
     get:
       tags:
-        - STATISTICS
+        - PLAYER-STATISTICS
       summary: List all statistics from statistics table
       parameters:
         - name: page
@@ -691,17 +636,12 @@ paths:
                 statusCode: 200
                     
 
-        '500':
-          description: Server Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ServerError"
+   
 
   /api/statistics/{playerId}:
     get:
       tags:
-        - STATISTICS
+        - PLAYER-STATISTICS
       summary: Get statistics for a single player
       parameters:
         - name: playerId
@@ -751,16 +691,10 @@ paths:
               schema:
                 $ref: "#/components/schemas/NotFoundError"
 
-        '500':
-          description: Server Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ServerError"
 
     put:
       tags:
-        - STATISTICS
+        - PLAYER-STATISTICS
       summary: Update single statistics
       parameters:
         - name: id
@@ -822,16 +756,11 @@ paths:
               schema:
                 $ref: "#/components/schemas/NotFoundError"
           
-        '500':
-          description: Server Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ServerError"
+  
 
     delete:
       tags:
-        - STATISTICS
+        - PLAYER-STATISTICS
       summary: Delete specific statistics
       parameters:
         - name: id
@@ -869,14 +798,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/NotFoundError"
-
-        '500':
-          description: Server Error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ServerError"
-
 
 
 components:

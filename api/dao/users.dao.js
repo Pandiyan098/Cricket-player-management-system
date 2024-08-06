@@ -60,10 +60,8 @@ const changeUserPassword = async (userId, newPasswordHash) => {
   .update({password_hash: newPasswordHash})
   .eq('id', userId);
 
-
   if (error) {
-
-    return error
+    return error.message
   };
 };
 

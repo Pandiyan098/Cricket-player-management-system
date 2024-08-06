@@ -33,11 +33,15 @@ const loginUser = async (email,password) => {
     const isValidPass = await bcrypt.compare(password, user.password_hash);
     if(user !== undefined){
         if(isValidPass){
-            const token = jwt.sign({ userId: user.id, role: user.role }, JWT_SECRET, { expiresIn: '30d' });
-  await updateLastLogin(user.id);
-  return { token };
+            const jwtToken = jwt.sign({ userId: user.id, role: user.role }, JWT_SECRET, { expiresIn: '30d' });
+            
+            await updateLastLogin(user.id);
+            
+            return {jwtToken};
         }
+        throw new Error("invalid password");
     }
+    throw new Error("Invalid email and password");
 };
 
 
@@ -51,11 +55,10 @@ const loginUser = async (email,password) => {
 const logOuts = async(username,password) => {
     const user = await getUserPass(username);
     const isValidPass = await bcrypt.compare(password,user.password_hash);
-    if(isValidPass === false){
-      return error
+    if(!isValidPass) {
+      throw new Error("invalid password")
     }
-    
-    return isValidPass;
+    return user
 }
 
 /**

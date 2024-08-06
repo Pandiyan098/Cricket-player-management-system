@@ -11,7 +11,7 @@ const addPlayer = async(req, res) => {
   const {name, age, category, team} = req.body;
   try{
     await createPlayer(name, age, category, team);
-    res.send({
+    res.status(200).json({
       success: true,
       error: false,
       message: "Player added successfully",
@@ -21,7 +21,7 @@ const addPlayer = async(req, res) => {
       statusCode: 200
     })
   }catch(error){
-    res.send({
+    res.status(400).json({
       success: false,
       error:{
         errorCode: 400,
@@ -46,7 +46,7 @@ const getSinglePlayer = async(req, res) => {
   const {id} = req.params;
   try{
     const player = await getPlayer(id);
-    res.send({
+    res.status(200).json({
       success: true,
       error: false,
       message: "Player data fetched",
@@ -54,7 +54,7 @@ const getSinglePlayer = async(req, res) => {
       statusCode: 200
     })
   }catch(error){
-    res.send({
+    res.status(400).json({
       success: false,
       error:{
         errorCode: 400,
@@ -78,7 +78,7 @@ const listPlayers = async(req, res) => {
   const {category, team, limit = 10, offset = 0} = req.query;
   try{
     const players = await getPlayersList(category, team, parseInt(limit), parseInt(offset));
-    res.send({
+    res.status(200).json({
       success: true,
       error: false,
       message: "Players fetched successfully",
@@ -86,7 +86,7 @@ const listPlayers = async(req, res) => {
       statusCode: 200
     })
   }catch(error){
-    res.send({
+    res.status(400).json({
       success: false,
       error:{
         errorCode: 400,
@@ -111,7 +111,7 @@ const updatePlayer = async(req, res) => {
   const {name, age, category, team} = req.body;
   try{
     await modifyPlayer(id, name, age, category, team);
-    res.send({
+    res.status(200).json({
       success: true,
       error: false,
       message: "Player details updated",
@@ -121,7 +121,7 @@ const updatePlayer = async(req, res) => {
       statusCode: 200
     });
   }catch(error){
-    res.send({
+    res.status(400).json({
       success: false,
       error:{
         errorCode: 400,
@@ -145,7 +145,7 @@ const deletePlayer = async(req, res) => {
   const {id} = req.params;
   try{
     await removePlayer(id);
-    res.send({
+    res.status(200).json({
       success: true,
       error: false,
       message: "Player row deleted successfully",
@@ -155,7 +155,7 @@ const deletePlayer = async(req, res) => {
       statusCode: 200
     })
   }catch(error){
-    res.send({
+    res.status(400).json({
       success: false,
       error:{
         errorCode: 400,

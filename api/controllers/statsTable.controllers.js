@@ -11,7 +11,7 @@ const addStatistics = async(req, res) => {
   const {player_id, match_id, match_date, runs_scored, wickets_taken, catches, stumpings} = req.body;
   try{
     await createStatistics(player_id, match_id, match_date, runs_scored, wickets_taken, catches, stumpings);
-    res.send({
+    res.status(200).json({
       success: true,
       error: false,
       message: "New statistics added successfully",
@@ -21,7 +21,7 @@ const addStatistics = async(req, res) => {
       statusCode: 200
     });
   }catch(error) {
-    res.send({
+    res.status(400).json({
       success: false,
       error:{
         errorCode: 400,
@@ -45,7 +45,7 @@ const getStatistic = async(req, res) => {
   const {playerId} = req.params;
   try{
     const statistics = await getStatistics(playerId);
-    res.send({
+    res.status(200).json({
       success: true,
       error: false,
       message: "Statistics fetched successfully",
@@ -53,7 +53,7 @@ const getStatistic = async(req, res) => {
       statusCode: 200
     })
   }catch(error){
-    res.send({
+    res.status(400).json({
       success: false,
       error:{
         errorCode: 400,
@@ -78,7 +78,7 @@ const updateStatistics = async (req, res) => {
   const {runs_scored, wickets_taken, catches, stumpings} = req.body;
   try{
     await modifyStatistics(id,runs_scored,wickets_taken,catches,stumpings);
-    res.send({
+    res.status(200).json({
       success: true,
       error: false,
       message: "Statistics updated successfully",
@@ -88,7 +88,7 @@ const updateStatistics = async (req, res) => {
       statusCode: 200
     });
   }catch(error){
-    res.send({
+    res.status(400).json({
       success: false,
       error:{
         errorCode: 400,
@@ -112,7 +112,7 @@ const deleteStatistics = async (req, res) => {
   const {id} = req.params;
   try{
     await removeStatistics(id);
-    res.send({
+    res.status(200).json({
       success: true,
       error: false,
       message: "Statistics deleted successfully",
@@ -122,7 +122,7 @@ const deleteStatistics = async (req, res) => {
       statusCode: 200
     });
   }catch(error) {
-    res.send({
+    res.status(400).json({
       success: false,
       error:{
         errorCode: 400,
@@ -146,7 +146,7 @@ const listStatistics = async (req, res) => {
   const {limit = 10, offset = 0} = req.query;
   try{
     const statistics = await getStatisticsList(parseInt(limit), parseInt(offset));
-    res.send({
+    res.status(200).json({
       success: true,
       error: false,
       message: "Statistics fetched successfully",
@@ -156,7 +156,7 @@ const listStatistics = async (req, res) => {
       statusCode: 200
     });
   }catch(error) {
-    res.send({
+    res.status(400).json({
       success: false,
       error:{
         errorCode: 400,

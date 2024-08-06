@@ -13,8 +13,6 @@ const yamlpath = './api.yaml';
 const swaggerJsDocs = yaml.load(yamlpath);
 
 
-
-
 const app = express();
 app.use(express.json());
 
@@ -32,6 +30,7 @@ const PORT = process.env.PORT;
 
 //server Initialising
 const server = app.listen(PORT, () => {
+  
   console.log(`Server running on port http://localhost:${PORT}`);
 });
 

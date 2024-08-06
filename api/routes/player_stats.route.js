@@ -5,13 +5,13 @@ const authorize = require('../middlewares/roleMiddleware');
 
 const statsRouter = express.Router();
 
-statsRouter.post("/",authenticate,authorize(["admin", "manager"]),addStatistics);
+statsRouter.post("/",authenticate,authorize(["Admin", "Manager"]),addStatistics);
 
 statsRouter.get("/:playerId",getStatistic);
 
-statsRouter.put("/:id",authenticate,authorize(["admin", "manager"]),updateStatistics);
+statsRouter.put("/:id",authenticate,authorize(["Admin", "Manager"]),updateStatistics);
 
-statsRouter.delete("/:id",authenticate,authorize(["admin"]),deleteStatistics);
+statsRouter.delete("/:id",authenticate,authorize(["Admin"]),deleteStatistics);
 
 statsRouter.get("/",listStatistics);
 
