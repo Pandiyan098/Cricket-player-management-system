@@ -6,12 +6,13 @@ info:
 servers:
   - url: http://localhost:3000
     description: Local host server
+
 paths:
   /api/auth/register:
     post:
       tags:
         - USERS
-      summary: Register a new user
+      summary: Register a new user into user table
       requestBody:
         required: true
         content:
@@ -30,7 +31,7 @@ paths:
                   enum: [admin, manager, viewer]
       responses:
         '200':
-          description: User registered successfully
+          description: Successful response
           content:
             application/json:
               schema:
@@ -42,8 +43,15 @@ paths:
                     type: boolean
                   data: 
                     type: object
-
-
+                    properties:
+                      username:
+                        type: string
+                      email:
+                        type: string
+                      role:
+                        type: string
+                      lastLogin: 
+                        type: date
                   message:
                     type: string
               example:
@@ -56,7 +64,7 @@ paths:
                   lastLogin: 11-11-2000
                 message:  user added successfully
         '400':
-          description: username already existes
+          description: username already existes error
           content:
             application/json:
               schema:
@@ -90,7 +98,7 @@ paths:
     post:
       tags:
         - USERS
-      summary:  login user
+      summary:  login user with user email and password
       requestBody:
         required: true
         content:
@@ -279,6 +287,8 @@ paths:
       tags:
         - PLAYERS
       summary: Add a new player
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -424,6 +434,8 @@ paths:
       tags:
         - PLAYERS
       summary: Update player information
+      security:
+        - bearerAuth: []
       parameters:
         - name: id
           in: path
@@ -484,6 +496,8 @@ paths:
       tags:
         - PLAYERS
       summary: Delete a player
+      security:
+        - bearerAuth: []
       parameters:
         - name: id
           in: path
@@ -529,6 +543,8 @@ paths:
       tags:
         - PLAYER-STATISTICS
       summary: Add new statistics for a player
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -588,7 +604,7 @@ paths:
     get:
       tags:
         - PLAYER-STATISTICS
-      summary: List all statistics from statistics table
+      summary: List all statistics from statistics table of all players
       parameters:
         - name: page
           in: query
@@ -638,13 +654,13 @@ paths:
 
    
 
-  /api/statistics/{playerId}:
+  /api/statistics/{id}:
     get:
       tags:
         - PLAYER-STATISTICS
-      summary: Get statistics for a single player
+      summary: Get statistics of single player
       parameters:
-        - name: playerId
+        - name: Id
           in: path
           required: true
           schema:
@@ -695,7 +711,9 @@ paths:
     put:
       tags:
         - PLAYER-STATISTICS
-      summary: Update single statistics
+      summary: Update single player statistics
+      security:
+        - bearerAuth: []
       parameters:
         - name: id
           in: path
@@ -761,7 +779,9 @@ paths:
     delete:
       tags:
         - PLAYER-STATISTICS
-      summary: Delete specific statistics
+      summary: Delete single player statistics
+      security:
+        - bearerAuth: []
       parameters:
         - name: id
           in: path
